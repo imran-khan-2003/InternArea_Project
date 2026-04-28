@@ -12,7 +12,7 @@ function UserApplication() {
   useEffect(()=>{
     const fetchApplication=async()=>{
       try{
-        const response=await axios.get("https://backend-internarea-fun8.onrender.com/api/application")
+        const response=await axios.get("/api/application")
         setApplication(response.data)
       }
       catch(error){

@@ -9,7 +9,7 @@ function Job() {
   useEffect(()=>{
     const fetchData=async()=>{
       try{
-        const response=await axios.get(`https://backend-internarea-fun8.onrender.com/api/job`)
+        const response=await axios.get(`/api/job`)
         setJobData(response.data)
       }catch(error){
         console.log(error)

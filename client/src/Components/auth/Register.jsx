@@ -36,7 +36,7 @@ const closeLogin=()=>{
     setDivVisible(false)
 }
   return (
-    <div>
+    <div className="form-page">
       <div className="form">
         <h1>Sign-up and Apply For Free</h1>
         <p className='para3'>1,50,000+ companies hiring on InternArea</p>
@@ -89,7 +89,7 @@ const closeLogin=()=>{
         </div>
       </div>
       </div>
-      <div className="login">
+      <div className="login register-login">
     {
         isDivVisible &&(
             <>

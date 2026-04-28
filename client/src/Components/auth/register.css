@@ -1,8 +1,56 @@
-h1{
-font-size:  28px;
-font-weight: bolder;
-text-align: center;
+.form {
+  max-width: 980px;
+  margin: 1.7rem auto;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(124, 58, 237, 0.22);
+  border-radius: 26px;
+  box-shadow: 0 24px 48px rgba(91, 33, 182, 0.16);
+  padding: 1.4rem;
+  backdrop-filter: blur(10px);
 }
-p{
-    text-align: center;
+
+.form h1 {
+  font-size: clamp(1.5rem, 2vw, 2.1rem);
+  font-weight: 800;
+  text-align: center;
+  margin: 0.2rem 0;
+  color: #312e81;
+}
+
+.form p,
+.para3 {
+  text-align: center;
+  color: #6b7280;
+}
+
+.regi {
+  margin-top: 0.8rem;
+}
+
+.form input {
+  border-radius: 12px !important;
+  border-color: rgba(124, 58, 237, 0.24) !important;
+}
+
+.form input:focus {
+  border-color: #7c3aed !important;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.14);
+}
+
+.form button {
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #7c3aed, #0ea5e9);
+  color: #fff;
+  font-weight: 700;
+}
+
+.form button:hover {
+  box-shadow: 0 14px 26px rgba(91, 33, 182, 0.28);
+}
+
+.form-page .register-login #cross {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(124, 58, 237, 0.24);
+  color: #4b5563;
 }

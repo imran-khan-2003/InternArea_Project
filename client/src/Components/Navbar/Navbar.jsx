@@ -1,31 +1,44 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import logo from "../../Assets/logo.png";
 import Sidebar from "./Sidebar";
 import "./navbar.css";
 import { signInWithPopup, signOut } from "firebase/auth";
 import { auth, provider } from "../../firebase/firebase";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { selectUser } from "../../Feature/Userslice";
+import { useDispatch, useSelector } from "react-redux";
+import { login, selectUser } from "../../Feature/Userslice";
 import { useNavigate } from "react-router-dom";
 function Navbar() {
   const navigate=useNavigate()
+  const dispatch = useDispatch();
   const user=useSelector(selectUser);
-  const [isDivVisibleForIntern, setDivVisibleForIntern] = useState(false);
-  const [isDivVisibleForJob, setDivVisibleForJob] = useState(false);
+  const profileRef = useRef(null);
   const [isDivVisibleForlogin, setDivVisibleForlogin] = useState(false);
   const [isStudent, setStudent] = useState(true);
   const [isDivVisibleForProfile,setDivVisibleForProfile]=useState(false)
+  const [searchQuery, setSearchQuery] = useState("");
+  const [profileImageError, setProfileImageError] = useState(false);
 
   const loginFunction = () => {
     signInWithPopup(auth, provider)
       .then((res) => {
         console.log(res);
+        const loggedInUser = res?.user;
+        const providerInfo = loggedInUser?.providerData?.[0] || {};
+        dispatch(login({
+          uid: loggedInUser?.uid,
+          photo: loggedInUser?.photoURL || providerInfo.photoURL || "",
+          name: loggedInUser?.displayName || providerInfo.displayName || "User",
+          email: loggedInUser?.email || providerInfo.email || "",
+          phoneNumber: loggedInUser?.phoneNumber || "",
+        }));
       })
       .catch((err) => {
         console.log(err);
+      })
+      .finally(() => {
+        setDivVisibleForlogin(false)
       });
-      setDivVisibleForlogin(false)
   };
   const showLogin = () => {
     setDivVisibleForlogin(true);
@@ -39,37 +52,44 @@ function Navbar() {
   const setFalseForStudent = () => {
     setStudent(true);
   };
-  //for showing profile dropdown
-  const showTheProfile=()=>{
-    setDivVisibleForProfile(true)
-    document.getElementById("ico3").className="bi bi-caret-up-fill"
-  }
-  const hideTheProfile=()=>{
-    setDivVisibleForProfile(false)
-    document.getElementById("ico3").className="bi bi-caret-down-fill"
-  }
+  const toggleProfileDropdown = () => {
+    setDivVisibleForProfile((prev) => !prev);
+  };
 
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setDivVisibleForProfile(false);
+      }
+    };
 
-  const showInternShips = () => {
-    document.getElementById("ico").className = "bi bi-caret-up-fill";
-    setDivVisibleForIntern(true);
-  };
-  const hideInternShips = () => {
-    document.getElementById("ico").className = "bi bi-caret-down-fill";
-    setDivVisibleForIntern(false);
-  };
-  const showJobs = () => {
-    document.getElementById("ico2").className = "bi bi-caret-up-fill";
-    setDivVisibleForJob(true);
-  };
-  const hideJobs = () => {
-    document.getElementById("ico2").className = "bi bi-caret-down-fill";
-    setDivVisibleForJob(false);
-  };
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, []);
+
+  useEffect(() => {
+    setProfileImageError(false);
+  }, [user?.photo]);
   const logoutFunction=()=>{
     signOut(auth);
     navigate("/");
   }
+
+  const handleGlobalSearch = () => {
+    const value = searchQuery.trim();
+    if (!value) return;
+    navigate(`/internships?q=${encodeURIComponent(value)}`);
+    setSearchQuery("");
+  };
+
+  const handleSearchKeyDown = (event) => {
+    if (event.key === "Enter") {
+      handleGlobalSearch();
+    }
+  };
+
   return (
     <div>
       <nav className="nav1">
@@ -79,31 +99,55 @@ function Navbar() {
           </div>
           <div className="elem">
 
-            <Link to={"/internships"}><p id="int" className="" onMouseEnter={showInternShips}>
-              InternShips{" "}
-              <i
-                id="ico"
-                onClick={hideInternShips}
-                class="bi bi-caret-down-fill"
-              ></i>
-            </p></Link>
-            <Link to={"/jobs"}><p onMouseEnter={showJobs}>
-              Jobs{" "}
-              <i id="ico2" onClick={hideJobs} class="bi bi-caret-down-fill"></i>
-            </p></Link>
+            <Link to={"/internships"}><p id="int" className="">InternShips</p></Link>
+            <Link to={"/jobs"}><p>Jobs</p></Link>
           </div>
           <div className="search">
-            <i class="bi bi-search"></i>
-            <input type="text" placeholder="Search" />
+            <button
+              type="button"
+              className="search-trigger"
+              onClick={handleGlobalSearch}
+              aria-label="Search internships"
+            >
+              <i class="bi bi-search"></i>
+            </button>
+            <input
+              type="text"
+              placeholder="Search internships..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={handleSearchKeyDown}
+            />
           </div>
           {
             user?(
               <>
-                <div className="Profile">
-                  <Link to={"/profile"}>
-                    <img src={user.photo} alt="" onMouseEnter={showTheProfile} className="rounded-full w-12" id="picpro"/>
-                    <i className="bi bi-caret-up-fill right-10" id="ico3" onClick={hideTheProfile}></i>
-                  </Link>
+                <div className="Profile" ref={profileRef}>
+                  <button type="button" className="profile-trigger" onClick={toggleProfileDropdown}>
+                    {user?.photo && !profileImageError ? (
+                      <img
+                        src={user.photo}
+                        alt={user?.name || "Profile"}
+                        className="rounded-full w-12"
+                        id="picpro"
+                        onError={() => setProfileImageError(true)}
+                        referrerPolicy="no-referrer"
+                      />
+                    ) : (
+                      <div className="avatar-fallback">{(user?.name || "U").charAt(0).toUpperCase()}</div>
+                    )}
+                    <i className={`bi ${isDivVisibleForProfile ? "bi-caret-up-fill" : "bi-caret-down-fill"}`} id="ico3"></i>
+                  </button>
+
+                  {isDivVisibleForProfile &&(
+                    <div className="profile-dropdown shadow-sm">
+                        <p className='font-bold'>{user?.name || "User"}</p>
+                        <p className='font-medium'>{user?.email || "No email"}</p>
+                        <Link className="profile-link" to={"/profile"} onClick={() => setDivVisibleForProfile(false)}>
+                          View Profile
+                        </Link>
+                    </div>
+                  )}
                 </div>
               </>
             ):(
@@ -121,7 +165,7 @@ function Navbar() {
         </>
     ):(
         <>
-            <div className="flex mt-7 hire">
+            <div className="hire">
 Hire Talent
     </div>
 
@@ -133,43 +177,8 @@ Hire Talent
   }
         </ul>
       </nav>
+      <div className="navbar-spacer" />
 
-      {isDivVisibleForIntern && (
-        <div className="profile-dropdown-2">
-          <div className="left-section">
-            <p>Top Locations</p>
-            <p>Profile</p>
-            <p>Top Category</p>
-            <p>Explore More Internships</p>
-          </div>
-          <div className="line flex bg-slate-400"></div>
-          <div className="right-section">
-            <p>Intern at India</p>
-            <p>Intern at India</p>
-            <p>Intern at India</p>
-            <p>Intern at India</p>
-            <p>Intern at India</p>
-          </div>
-        </div>
-      )}
-      {isDivVisibleForJob && (
-        <div className="profile-dropdown-1">
-          <div className="left-section">
-            <p>Top Locations</p>
-            <p>Profile</p>
-            <p>Top Category</p>
-            <p>Explore More Jobs</p>
-          </div>
-          <div className="line flex bg-slate-400"></div>
-          <div className="right-section">
-            <p>Job at India</p>
-            <p>Job at India</p>
-            <p>Job at India</p>
-            <p>Job at India</p>
-            <p>Job at India</p>
-          </div>
-        </div>
-      )}
       <div className="login">
         {isDivVisibleForlogin && (
           <>
@@ -347,15 +356,6 @@ Hire Talent
           </>
         )}
 
-        {isDivVisibleForProfile&&(
-        <div className="profile-dropdown h-16 rounded-sm shadow-sm">
-            <p className='font-bold'>{user?.name}</p>
-            <p className='font-medium'>{user?.email}</p>
-           
-        </div>
-    )
-
-    }
       </div>
 
 

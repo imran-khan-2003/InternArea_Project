@@ -3,7 +3,7 @@ import "./intern.css"
 
 import compLogo from "../../Assets/netflix.png"
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 function Intern() {
 
 const [serachCategory,setSearchCategory]=useState("");
@@ -12,6 +12,7 @@ const [filterInternship,setFilterInternship]=useState([])
 const [isDivVisible,setDivVisible]=useState(false)
 
 const [InternData,setInternData]=useState([])
+const location = useLocation();
 
   const showDiv=()=>{
   setDivVisible(true)
@@ -24,7 +25,7 @@ const [InternData,setInternData]=useState([])
   useEffect(()=>{
     const fetchData= async()=>{
         try {
-        const response= await axios.get(`https://backend-internarea-fun8.onrender.com/api/internship`)
+        const response= await axios.get(`/api/internship`)
         setInternData(response.data)
         console.log(response.data)
     } catch (error) {
@@ -38,21 +39,32 @@ fetchData();
   const handleCategoryChange=(e)=>{
     const categeoryValue=e.target.value;
     setSearchCategory(categeoryValue);
-    setFilterInternship([categeoryValue,searchLoaction])
   }
   
   const handleCategoryLocationChange=(e)=>{
     const loactionValue=e.target.value;
     setSearchLocation(loactionValue);
-    setFilterInternship([serachCategory,loactionValue])
   }
+
+  const clearAllFilters = () => {
+    setSearchCategory("");
+    setSearchLocation("");
+    setFilterInternship(InternData);
+  };
+
   const filterInterships = (category, location) => {
     if (InternData && InternData.length > 0) {
-    
+      const categoryTerm = category.toLowerCase();
+      const locationTerm = location.toLowerCase();
+
         const filterData = InternData.filter(
           (internship) =>
-            internship.category.toLowerCase().includes(category.toLowerCase()) &&
-            internship.location.toLowerCase().includes(location.toLowerCase())
+            (
+              internship.category?.toLowerCase().includes(categoryTerm) ||
+              internship.title?.toLowerCase().includes(categoryTerm) ||
+              internship.company?.toLowerCase().includes(categoryTerm)
+            ) &&
+            internship.location?.toLowerCase().includes(locationTerm)
         );
         setFilterInternship(filterData);
       
@@ -60,8 +72,12 @@ fetchData();
   };
   useEffect(() => {
     filterInterships(serachCategory, searchLoaction);
-  }, [searchLoaction, serachCategory]);
-console.log(filterInternship)
+  }, [searchLoaction, serachCategory, InternData]);
+
+  useEffect(() => {
+    const query = new URLSearchParams(location.search).get("q") || "";
+    setSearchCategory(query);
+  }, [location.search]);
 
  
   return (
@@ -91,11 +107,16 @@ console.log(filterInternship)
 </div>
 
 <p className= ' mt-5 text-blue-400'>View more filters <i class="bi bi-chevron-down"></i></p>
-<span className='justify-end flex text-blue-400 mr-3'>Clear all</span>
+<button type='button' className='justify-end flex text-blue-400 mr-3 clear-filter-btn' onClick={clearAllFilters}>Clear all</button>
 </div>
 <div className="search-2"><div className="search-container">
   
-  <input type="text" placeholder='eg. Design Media MBA' />
+  <input
+    type="text"
+    placeholder='eg. Design Media MBA'
+    value={serachCategory}
+    onChange={handleCategoryChange}
+  />
   <div className="search-icon">
   <i class="bi bi-search"></i>
   </div>
@@ -111,35 +132,35 @@ console.log(filterInternship)
 
     { filterInternship.map((data,index)=>(
 
-<div className='shadow-lg rounded-lg bg-white m-7 ' id='display'>
-  <div className="m-4">
+<div key={data._id || index} className='intern-result-card shadow-lg rounded-lg bg-white m-7 ' id='display'>
+  <div className="intern-card-inner m-4">
   <p className='mb-4 mt-3' id='boxer'> <i className='bi bi-arrow-up-right text-blue-500' ></i> Actively Hiring</p>
-  <div className="flex justify-end">
+  <div className="intern-logo-row flex justify-end">
 <img src={compLogo} className='w-14' alt="" />
   </div>
-<div className="all-ele">
+<div className="all-ele intern-main">
 
 
-<div className='text-lg text-black m-2 mt-7 font-bold'>{data.title}</div>
-<div className="info">
+<div className='intern-title text-lg text-black m-2 mt-7 font-bold'>{data.title}</div>
+<div className="info intern-company-block">
 <p className='text-sm text-slate-300 font-bold'>{data.company}</p>
 <p className=' mt-2'>{data.location}</p>
 </div>
-<div className="flex text-sm justify-between">
-  <p className='mt-3'> <i class="bi bi-play-circle-fill"></i>   Start Date  <br />  {data.StartDate}</p>
+<div className="intern-meta flex text-sm justify-between">
+  <p className='intern-meta-item mt-3'> <i class="bi bi-play-circle-fill"></i>   Start Date  <br />  {data.StartDate}</p>
 
 
-  <p className='mt-3'> <i class="bi bi-calendar-check-fill"></i>  Duration  <br />
+  <p className='intern-meta-item mt-3'> <i class="bi bi-calendar-check-fill"></i>  Duration  <br />
   {data.Duration}</p>
 
-  <p className='mt-3'>  <i class="bi bi-cash"></i>   Stipend <br /> {data.stipend}</p>
+  <p className='intern-meta-item mt-3'>  <i class="bi bi-cash"></i>   Stipend <br /> {data.stipend}</p>
    </div>
    </div>
-   <span className='bg-slate-200 text-slate-400 w-20 rounded-sm text-center'>Internship</span>
+   <span className='intern-type-pill bg-slate-200 text-slate-400 w-20 rounded-sm text-center'>Internship</span>
    <br />
-   <span><i class="bi bi-stopwatch text-green-300"></i>23/11/2065</span>
-   <div className="flex justify-end" id='hr'>
-<Link to={`/intern_detail?q=${data._id}`} className='mt-10'><button id='viewButtons' className='bg-transparent text-blue-500'>View In Detail</button></Link>
+   <span className='intern-date-pill'><i class="bi bi-stopwatch text-green-300"></i>23/11/2065</span>
+   <div className="intern-action-row flex justify-end" id='hr'>
+<Link to={`/intern_detail?q=${data._id}`}><button id='viewButtons' className='intern-view-btn bg-transparent text-blue-500'>View In Detail</button></Link>
    </div>
   </div>
   </div>
@@ -147,6 +168,14 @@ console.log(filterInternship)
     ))
      
     }
+
+    {filterInternship.length === 0 && (
+      <div className='empty-list-card'>
+        <h3>No internships found</h3>
+        <p>Try a different profile or location, or clear all filters.</p>
+        <button type='button' onClick={clearAllFilters}>Reset filters</button>
+      </div>
+    )}
 
   </div>
   {
@@ -177,11 +206,17 @@ console.log(filterInternship)
 </div>
 
 <p className= ' mt-5 text-blue-400'>View more filters <i class="bi bi-chevron-down"></i></p>
-<span className='justify-end flex text-blue-400 mr-3'>Clear all</span>
+<button type='button' className='justify-end flex text-blue-400 mr-3 clear-filter-btn' onClick={clearAllFilters}>Clear all</button>
 </div>
 <div className="search-2"><div className="search-container">
   <label htmlFor="ex ">Experince</label>
-  <input type="text" id='ex' placeholder='eg. 0-1 year' />
+  <input
+    type="text"
+    id='ex'
+    placeholder='eg. Design Media MBA'
+    value={serachCategory}
+    onChange={handleCategoryChange}
+  />
   <div className="search-icon">
   <i class="bi bi-search"></i>
   </div>

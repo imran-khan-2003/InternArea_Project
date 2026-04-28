@@ -4,51 +4,44 @@ import { RiSendPlaneFill } from "react-icons/ri";
 import { BsMailbox2Flag } from "react-icons/bs";
 function Adminpanel() {
   return (
-    <div>
-    
+    <div className="admin-panel-wrap">
+      <div className="admin-panel-card">
+        <h1>Admin Dashboard</h1>
+        <p>Manage listings and applications from one place.</p>
 
-
-      <div class="hidden w-full overflow-hidden rounded-lg border bg-gray-50 shadow-sm lg:block">
-      <div class="mx-auto flex max-w-screen-lg items-center gap-8 p-8">
-        <div class="grid w-2/3 grid-cols-2 gap-8">
-          <Link to={"/applications"} class="group flex gap-4">
-            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-indigo-500 text-white shadow-lg transition duration-100 group-hover:bg-indigo-600 group-active:bg-indigo-700 md:h-12 md:w-12">
-            <BsMailbox2Flag />
-            </div>
-
+        <div className="admin-panel-grid">
+          <Link to={"/applications"} className="admin-panel-item">
+            <span className="admin-item-icon">
+              <BsMailbox2Flag />
+            </span>
             <div>
-              <div class="mb-1 font-semibold">View Applications</div>
-              <p class="text-sm text-gray-500">View All the Applications That you got from applicants</p>
+              <h3>View Applications</h3>
+              <p>Review candidate applications and update statuses.</p>
             </div>
           </Link>
 
-          <Link to={"/postJob"}  class="group flex gap-4">
-            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-indigo-500 text-white shadow-lg transition duration-100 group-hover:bg-indigo-600 group-active:bg-indigo-700 md:h-12 md:w-12">
-            <i class="bi bi-briefcase"></i>
-            </div>
-
+          <Link to={"/postJob"} className="admin-panel-item">
+            <span className="admin-item-icon">
+              <i className="bi bi-briefcase"></i>
+            </span>
             <div>
-              <div class="mb-1 font-semibold">Post Job</div>
-              <p class="text-sm text-gray-500">Post Jobs According to Your Requirements</p>
+              <h3>Post Job</h3>
+              <p>Create and publish full-time or part-time job listings.</p>
             </div>
           </Link>
 
-          <Link to={"/postInternship"} class="group flex gap-4">
-            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-indigo-500 text-white shadow-lg transition duration-100 group-hover:bg-indigo-600 group-active:bg-indigo-700 md:h-12 md:w-12">
-            <RiSendPlaneFill />
-            </div>
+          <Link to={"/postInternship"} className="admin-panel-item">
+            <span className="admin-item-icon">
+              <RiSendPlaneFill />
+            </span>
             <div>
-              <div class="mb-1 font-semibold">Post InternShips</div>
-              <p class="text-sm text-gray-500">Post InternShip According To Your Requirements </p>
+              <h3>Post Internship</h3>
+              <p>Add internship opportunities for students and freshers.</p>
             </div>
           </Link>
-
         </div>
-
-  
       </div>
     </div>
-  </div>
 
   )
 }

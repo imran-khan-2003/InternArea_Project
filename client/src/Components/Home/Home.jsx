@@ -16,7 +16,7 @@ function Home() {
   useEffect(()=>{
     const fetchData=async()=>{
       try{
-        const response=await axios.get(`https://backend-internarea-fun8.onrender.com/api/internship`)
+        const response=await axios.get(`/api/internship`)
         setInternshipData(response.data)
       }catch(error){
         console.log(error)

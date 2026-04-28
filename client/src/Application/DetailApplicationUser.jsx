@@ -1,51 +1,64 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom';
+import "./detailApplication.css";
 
 function DetailApplicationUser() {
-  const [data,setData] =useState([])
+  const [data,setData] =useState(null)
   let search=window.location.search;
   const params=new URLSearchParams(search);
 const id=params.get("a")
 useEffect(()=>{
    const fetchData= async()=>{
-  const response=await axios.get(`https://backend-internarea-fun8.onrender.com/api/application/${id}`)
+  const response=await axios.get(`/api/application/${id}`)
 
-  setData([response.data])
+  setData(response.data)
    }
    fetchData()
 },[id])
 
-console.log(data)
+if (!data) {
   return (
-    <div>
-   {
-    data.map((data)=>(
-      <section class="text-gray-600 body-font overflow-hidden">
-      <div class="container px-5 py-24 mx-auto">
-        <div class="lg:w-4/5 mx-auto flex flex-wrap">
-          <img alt="ecommerce" class="lg:w-1/2 w-full lg:h-auto h-64 object-cover  rounded" src={data.user.photo}/>
-          <div class="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
-            <h2 class="text-sm title-font text-gray-500 tracking-widest">Company name</h2>
-            <h1 class="text-gray-900 font-bold title-font mb-1 -mt-8">{data.company}</h1>
-          <h2>Cover Letter</h2>
-            <p class="leading-relaxed font-bold -mt-8">{data.coverLetter}</p>
-            <div class="flex mt-6  pb-5 border-b-2 border-gray-100 mb-5">
-         
-                <span class="mr-3">Application Date</span><br />
-             <p className='font-bold'>{new Date(data?.createAt).toLocaleDateString()}</p>
-           
-            </div>
-            <h4 className=' mt-9'>Applied By</h4>
-     <p className='font-bold -mt-8'>{data.user.name}</p>
+    <div className="application-detail-page">
+      <div className="application-detail-card">
+        <p>Loading application details...</p>
+      </div>
+    </div>
+  );
+}
 
+  return (
+    <div className="application-detail-page">
+      <div className="application-detail-card">
+        <div className="application-detail-photo-wrap">
+          <img
+            alt={data?.user?.name || "Applicant"}
+            className="application-detail-photo"
+            src={data?.user?.photo}
+          />
+          <p className={`application-status ${(data?.status || "pending").toLowerCase()}`}>
+            {data?.status || "Pending"}
+          </p>
+        </div>
+
+        <div className="application-detail-content">
+          <p className="application-label">Company</p>
+          <h2 className="application-company">{data?.company}</h2>
+
+          <p className="application-label">Cover Letter</p>
+          <p className="application-cover-letter">{data?.coverLetter}</p>
+
+          <div className="application-meta">
+            <p>
+              <span>Application Date</span>
+              <strong>{new Date(data?.createAt).toLocaleDateString()}</strong>
+            </p>
+            <p>
+              <span>Applied By</span>
+              <strong>{data?.user?.name}</strong>
+            </p>
           </div>
-      
         </div>
       </div>
-    </section>
-    ))
-   }
     </div>
   )
 }

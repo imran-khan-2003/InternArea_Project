@@ -1,76 +1,90 @@
-.apply{
-      justify-content: center;
-      width: 150px;
-      font-weight: 500;
-      font-size: 16px;
-      margin-top: 12px;
-      height: 43px;
-      background: #078edd;
-      margin-bottom: 34px;
-      }
-      .submit-btn{
-      justify-content: center;
-      width: 150px;
-      font-weight: 500;
-      font-size: 16px;
-      margin-top: 12px;
-      height: 43px;
-      background: #078edd;
-      margin-bottom: 34px;
-      }
-      .details-app p{
-          margin-left: 12px;
-      }
-      .moreSteps{
-          margin-left: 12px;
-      }
-      .bg{
-          border-radius: 6px;
-          background: #f8f8f8;
-      }
-      textarea{
-      
-          width: 60%;
-          height: 150px;
-          padding: 12px 20px;
-          box-sizing: border-box;
-        border: 1px solid gray;
-          border-radius: 4px;
-      
-          font-size: 16px;
-          resize: none;
-      }
-      .application-page{
-          width: 55%;
-          position: absolute;
-          left: 22%;
-          z-index: 1;
-          background-color: #ffff;
-          top: 20%;
-          box-shadow:  0px 0px 5px -2px #078edd;
-      }
-      @media screen and (max-width: 768px) {
-          .application-page{ width:70%;
-              text-align: center;
-              left: 16%;
-          }
-         .details-app{
-          position: relative;
-          width: 100%px;
-          margin-left: 0px;
-         }
-         .close2{
-          background: #ffff;
-          color: black;
-          font-size: 25px;
-          position: relative;
-          left: 42%; 
-          width: 40px;
-         }
-      }
-      #resume{
-      outline: gray;
-      outline-style: dashed;
-      background-color: #f8f8f8;
-      text-align: center;
-      }
+.details-app {
+  max-width: 980px;
+  margin: 1.6rem auto 0;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(124, 58, 237, 0.2);
+  border-radius: 22px;
+  box-shadow: 0 20px 38px rgba(91, 33, 182, 0.16);
+  backdrop-filter: blur(10px);
+  padding: 1.15rem;
+}
+
+.apply,
+.submit-btn {
+  width: 160px;
+  height: 42px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #7c3aed, #0ea5e9);
+  color: #fff;
+  font-weight: 700;
+}
+
+.details-app p,
+.moreSteps {
+  margin-left: 0;
+}
+
+.bg {
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.12), rgba(14, 165, 233, 0.12));
+  border: 1px solid rgba(124, 58, 237, 0.2);
+  padding: 0.9rem;
+}
+
+textarea {
+  width: min(100%, 620px);
+  height: 140px;
+  padding: 0.8rem;
+  border: 1px solid rgba(124, 58, 237, 0.3);
+  border-radius: 12px;
+  font-size: 15px;
+  resize: none;
+  outline: none;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+textarea:focus {
+  border-color: #7c3aed;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.16);
+}
+
+.application-page {
+  width: min(760px, calc(100% - 1.4rem));
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 120;
+  background: rgba(255, 255, 255, 0.96);
+  top: 10%;
+  border: 1px solid rgba(124, 58, 237, 0.2);
+  border-radius: 18px;
+  box-shadow: 0 28px 58px rgba(91, 33, 182, 0.25);
+  padding: 1rem;
+  max-height: 82vh;
+  overflow-y: auto;
+}
+
+.close2 {
+  border: 1px solid rgba(124, 58, 237, 0.24);
+  background: rgba(255, 255, 255, 0.8);
+  color: #4b5563;
+  border-radius: 10px;
+  padding: 0.24rem 0.58rem;
+}
+
+#resume {
+  outline: 2px dashed #93c5fd;
+  background-color: #f8fbff;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .details-app {
+    margin: 1rem 0.6rem 0;
+  }
+
+  .application-page {
+    top: 6%;
+  }
+}

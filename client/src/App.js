@@ -27,12 +27,13 @@ function App() {
   useEffect(() => {
     auth.onAuthStateChanged((authUser)=>{
       if(authUser){
+        const providerInfo = authUser.providerData?.[0] || {};
         dispatch(login({
   
           uid:authUser.uid,
-          photo:authUser.photoURL,
-          name:authUser.displayName,
-          email:authUser.email,
+          photo:authUser.photoURL || providerInfo.photoURL || "",
+          name:authUser.displayName || providerInfo.displayName || "User",
+          email:authUser.email || providerInfo.email || "",
           phoneNumber:authUser.phoneNumber
         }))
       }

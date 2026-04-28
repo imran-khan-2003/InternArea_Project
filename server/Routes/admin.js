@@ -8,11 +8,11 @@ const adminPassword='admin'
 // For admin login
 router.post("/adminLogin", (req,res)=>{
     const {username,password}=req.body
-    if (username===adminUsername || password===adminPassword) {
-        res.send("Admin is here")
+    if (username===adminUsername && password===adminPassword) {
+        res.status(200).send("Admin is here")
     }
     else{
-        res.statusCode(401).send("Unauthrized")
+        res.status(401).send("Unauthorized")
     }
 })
 module.exports=router

@@ -8,8 +8,12 @@ import { signOut } from 'firebase/auth';
 import { auth } from '../../firebase/firebase';
 
 function Sidebar() {
-    const [sidebarOpen, setSidebarOpen] = useState(false);
-const navigate=useNavigate()
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [mobileSearch, setMobileSearch] = useState("");
+  const [profileImageError, setProfileImageError] = useState(false);
+  const navigate=useNavigate()
+  const user=useSelector(selectUser)
+
   const openSidebar = () => {
     setSidebarOpen(true);
   };
@@ -19,145 +23,132 @@ const navigate=useNavigate()
   };
 
   useEffect(() => {
-    const handleOutsideClick = (e) => {
-      if (sidebarOpen && !e.target.closest('.sidebar') && !e.target.closest('.open-btn')) {
-        closeSidebar();
-      }
-    };
-
-    document.addEventListener('click', handleOutsideClick);
-
+    document.body.style.overflow = sidebarOpen ? 'hidden' : '';
     return () => {
-      document.removeEventListener('click', handleOutsideClick);
+      document.body.style.overflow = '';
     };
   }, [sidebarOpen]);
+
+  useEffect(() => {
+    setProfileImageError(false);
+  }, [user?.photo]);
+
   const logoutFunction=()=>{
     signOut(auth)
     navigate("/")
-  
-}
-  const user=useSelector(selectUser)
+    closeSidebar()
+  }
+
+  const handleMobileSearch = () => {
+    const value = mobileSearch.trim();
+    if (!value) return;
+    navigate(`/internships?q=${encodeURIComponent(value)}`);
+    setMobileSearch("");
+  };
+
+  const handleSearchKeyDown = (event) => {
+    if (event.key === "Enter") {
+      handleMobileSearch();
+    }
+  };
+
   return (
 
     <>
-  <div className="App2 -mt-2 overflow-hidden"  >
-      <Link to="/">
-  <img src={logo} alt=""  id='nav2-img'/>    </Link>  
-        <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
-          <span  className="cursor-pointer close-btn" onClick={closeSidebar}>
-            &times;
-          </span>
-          {user?(
-  <>
-  <div className="profile">
-   <Link to={"/profile"}>
-   <img className='rounded-full justify-center' src={user.photo} alt="" srcset="" />
-   </Link> 
-    <p className=' text-center'>Profile name <span className='font-bold text-blue-500'>{user?.name}</span></p>
-  </div>
-  </>
-):
-(
+      <div className="App2">
+        <div className="mobile-topbar">
+          <button type="button" className="open-btn" onClick={openSidebar} aria-label="Open menu">
+            <i className="bi bi-list"></i>
+          </button>
 
-  
-  <div className="auth">
-  
-</div>
-  ) 
-}
-          <Link to="/internships">internships </Link>
-    <Link to="/Jobs">Jobs  </Link>
-       
-       <Link to={"/"} className='small'>contact Us</Link> 
-<hr />
-{user?(
-  <>
-  <div className="addmore">
-    
-    {user?(
-  <Link to={"/userapplication"}>
-  <p>My Applications</p>
-  </Link>
-    ):(
-      <Link to={"/register"}>
-      <p>My Applications</p>
-      </Link>
-    )
+          <Link to="/" className="mobile-logo" onClick={closeSidebar}>
+            <img src={logo} alt="InternArea" id='nav2-img'/>
+          </Link>
 
-    }
-
-  <Link>
-  
-  <p>View Resume</p>
-  </Link>
-  <Link>
-  <p>More</p>
-  </Link>
-  <button className='bt-log' id='bt' onClick={logoutFunction}>Logout <i class="bi bi-box-arrow-right"></i></button>
-  <br />
-  <br />
-<button onClick={logoutFunction}>Log Out <i class="bi bi-box-arrow-right"></i></button>
-  
-  </div>
-  </>
-):
-(
-
-  
-  <div className="addmore">
-  <p>Register- As a Student</p>
-  <p>Register- As a Employer</p>
-  <br />
-  <br />
-
-  </div>
-  ) 
-}
-
+          <div className="mobile-actions">
+            {!user && (
+              <Link to="/register" className="mobile-mini-btn">Register</Link>
+            )}
+          </div>
         </div>
 
-
-        <div className="main">
-          <span style={{fontSize:"22px"}} className="open-btn" onClick={openSidebar}>
-            &#9776; 
-          </span>
+        <div className="search2">
+          <button type='button' className='mobile-search-trigger' onClick={handleMobileSearch} aria-label="Search internships">
+            <i className="bi bi-search"></i>
+          </button>
+          <input
+            type="search"
+            placeholder='Search internships...'
+            value={mobileSearch}
+            onChange={(e)=>setMobileSearch(e.target.value)}
+            onKeyDown={handleSearchKeyDown}
+          />
         </div>
-        
-<div className="search2">
-<i class="bi bi-search"></i>
-    <input type="search"  placeholder='Search'/>
-</div>
+      </div>
 
+      <div
+        className={`sidebar-overlay ${sidebarOpen ? 'show' : ''}`}
+      />
 
-{user?(
-  <>
+      <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
+        <button
+          type="button"
+          className="sidebar-close-icon-btn"
+          onClick={closeSidebar}
+          aria-label="Close sidebar"
+        >
+          ×
+        </button>
 
-  </>
-):
-(
+        <div className="sidebar-scroll">
+          {user ? (
+            <div className="sidebar-profile">
+              <Link to={"/profile"}>
+                {user?.photo && !profileImageError ? (
+                  <img
+                    className='sidebar-avatar'
+                    src={user.photo}
+                    alt={user?.name || "Profile"}
+                    onError={() => setProfileImageError(true)}
+                    referrerPolicy="no-referrer"
+                  />
+                ) : (
+                  <div className='sidebar-avatar sidebar-avatar-fallback'>
+                    {(user?.name || "U").charAt(0).toUpperCase()}
+                  </div>
+                )}
+              </Link>
+              <p className='text-center'>Hi, <span>{user?.name || "User"}</span></p>
+            </div>
+          ) : (
+            <div className="sidebar-card">
+              <h4>Welcome to InternArea</h4>
+              <p>Login or register to track applications and profile updates.</p>
+            </div>
+          )}
 
-  <>
-  <div className="reg">
-    
-  <Link to="/register" >   <button  className='btn4'>
-  Register</button></Link>
-  </div>
-  <div className="admin">
+          <nav className="sidebar-links">
+            <Link to="/internships">Internships</Link>
+            <Link to="/jobs">Jobs</Link>
+            <Link to="/">Home</Link>
+            <Link to="/adminLogin">Admin Login</Link>
+          </nav>
 
-<Link to={"/adminLog"}>
-<button id='admin'> Admin Login</button>
-</Link>
-</div>
-  </>
+          {user ? (
+            <div className="sidebar-card sidebar-actions">
+              <Link to={"/userapplication"}>My Applications</Link>
+              <Link to={"/profile"}>View Profile</Link>
+              <button className='sidebar-logout-btn' onClick={logoutFunction}>Logout <i className="bi bi-box-arrow-right"></i></button>
+            </div>
+          ) : (
+            <div className="sidebar-card sidebar-actions">
+              <Link to={"/register"}>Register as Student</Link>
+              <Link to={"/register"}>Register as Employer</Link>
+            </div>
+          )}
 
-
-
-  ) 
-}
-
-
-<p className='text-red-300'>Hire Talent</p>
-
+          <p className='sidebar-hire-text'>Hire Talent</p>
+        </div>
       </div>
     </>
     

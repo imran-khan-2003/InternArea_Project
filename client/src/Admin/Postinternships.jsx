@@ -16,27 +16,28 @@ function Postinternships() {
     const [startDate, setStartDate] = useState('');
     const [additionalInfo, setAdditionalInfo] = useState('');
    const navigate=useNavigate()
-    const sendData=(e)=>{
+    const sendData=async(e)=>{
       e.preventDefault();
-  if( title === '' &&
-  companyName === '' &&
-  location === '' &&
-  category === '' &&
-  aboutCompany === '' &&
-  aboutInternship === '' &&
-  whoCanApply === '' &&
-  perks === '' &&
-  numberOfOpening === '' &&
-  stipend === '' &&
-  startDate === '' &&
-  
-  additionalInfo === ''){
-  
-      alert("fill the Blanks ")
-  }
-  
-  
-  else{
+      const requiredFields = [
+        title,
+        companyName,
+        location,
+        category,
+        aboutCompany,
+        aboutInternship,
+        whoCanApply,
+        perks,
+        numberOfOpening,
+        stipend,
+        startDate,
+        additionalInfo,
+      ];
+
+      if (requiredFields.some((value) => String(value).trim() === "")) {
+        alert("Please fill all required fields");
+        return;
+      }
+
       const bodyJosn={
           title:title,
           company:companyName,
@@ -52,17 +53,19 @@ function Postinternships() {
           AdditionalInfo:additionalInfo,
   
       }
-  axios.post("https://backend-internarea-fun8.onrender.com/api/internship",bodyJosn).then((res)=>{
-      console.log(res.data)
-    }).catch((err)=>
-    console.log(err))
-    
-  }
-  alert(" Internship Posted is Successfully")
-  navigate("/adminpanel")
+
+      try {
+        const res = await axios.post("/api/internship",bodyJosn)
+        console.log(res.data)
+        alert("Internship posted successfully")
+        navigate("/adminpanel")
+      } catch (err) {
+        console.log(err)
+        alert("Unable to post internship. Please try again.")
+      }
     }
   return (
-    <div class="bg-white py-6 sm:py-8 lg:py-12">
+    <div className="admin-post-page bg-white py-6 sm:py-8 lg:py-12">
   <div class="mx-auto max-w-screen-2xl px-4 md:px-8">
     <div class="mb-10 md:mb-16">
       <h2 class="mb-4 text-center text-2xl font-bold text-gray-800 md:mb-6 lg:text-3xl">Post An Internship</h2>
@@ -70,7 +73,7 @@ function Postinternships() {
     
     </div>
 
-    <form class="mx-auto grid max-w-screen-md gap-4 sm:grid-cols-2" onSubmit={sendData}>
+    <form class="mx-auto grid max-w-screen-md gap-4 sm:grid-cols-2 admin-post-form" onSubmit={sendData}>
       <div>
         <label for="title" class="mb-2 inline-block text-sm text-gray-800 sm:text-base">title*</label>
         <input name="title" value={title} onChange={(e)=>setTitle(e.target.value)} class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring" />
@@ -126,7 +129,7 @@ function Postinternships() {
         <textarea name="additionalInfo" value={additionalInfo} onChange={(e)=>setAdditionalInfo(e.target.value)} class="h-12 w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring"></textarea>
       </div>
 
-     <button  className='hover:bg-blue-600'>Post Internship</button>
+     <button  className='hover:bg-blue-600 admin-post-btn'>Post Internship</button>
     </form>
   </div>
 </div>

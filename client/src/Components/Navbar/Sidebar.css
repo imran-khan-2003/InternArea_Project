@@ -1,181 +1,299 @@
-body {
-      font-family: 'Arial', sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #ffff;
-  
-    }
-    
-    .sidebar {
-      height: 100%;
-      width: 0;
-      position: fixed;
-      z-index: 1;
-      top: 0;
-      left: 0;
-      background-color: #ffff;
-      overflow-x: hidden;
-      transition: 0.5s;
-      padding-top: 60px;
-    }
-    
-    .sidebar a {
-      padding: 15px 10px;
-      text-decoration: none;
-      font-size: 25px;
-      color: #818181;
-      display: block;
-      transition: 0.3s;
-    }
-    
-    .sidebar a:hover {
-      color: #f1f1f1;
-    }
-    
-    .sidebar .close-btn {
-      position: absolute;
-      top: 0;
-      right: 25px;
-      font-size: 30px;
-      margin-left: 50px;
-    }
-    
-    .main {
-      transition: margin-left 0.5s;
-      padding: 16px;
-    }
-    
-    .open-btn {
-      font-size: 30px;
-      cursor: pointer;
-  position: relative;
-  top: -3.5rem;
-  margin-left: -13px;
-    }
-    
-    .sidebar.open {
-      width: 250px;
-    }
-    .App2{
-      box-shadow:  0px 0px 5px -2px black;
-      height: 70px;
-    }
-    
-    .main.open {
-      margin-left: 250px;
-    }
-    @media screen and (min-width: 768px) {
-      .App2{
-       display: none;
-      }
-  
-      
-     }
-  
-  .addmore p{
-      margin-top: 12px;
-  cursor: pointer;
-  }
-  .addmore {
-      margin-top:22px;
-  font-weight: 300;
-  }
-  
-  /*  for serach */
-  .search2{
-    position: relative;
-    left: 46%;
-    top: -6.5rem;
-  }
-  .search2 input{
-  
-      
-      font-size: 15px;
-      padding: 12px 2px;
-      width: 100px;
-      color: black;
-      font-weight: bolder;
-      border: none;
-      outline: none;
-  
-    }
-    .all-internships {
-      position: relative;
-      left: 23%;
-      width: 77%;
-  }
-  .btn4{
-      position: relative;
-      left: 62%;
-      top: -9rem;
-  background-color: #078edd;
-      outline: #078edd 2px solid;
-    color: white;
+.App2 {
+  position: sticky;
+  top: 0;
+  z-index: 120;
+  background: rgba(255, 255, 255, 0.9);
+  border-bottom: 1px solid rgba(124, 58, 237, 0.2);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 10px 20px rgba(91, 33, 182, 0.12);
+  padding: 0.45rem 0.7rem 0.65rem;
+}
+
+.mobile-topbar {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.open-btn {
   border: none;
-  width: 70px;
+  border-radius: 10px;
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(124, 58, 237, 0.1);
+  color: #4c1d95;
+  font-size: 1.1rem;
+}
+
+.mobile-logo {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+}
+
+#nav2-img {
+  width: 126px;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.mobile-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.mobile-mini-btn {
+  border-radius: 10px;
+  padding: 0.35rem 0.62rem;
+  background: linear-gradient(135deg, #7c3aed, #0ea5e9);
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.search2 {
+  margin-top: 0.55rem;
+  display: flex;
+  align-items: center;
+  gap: 0.34rem;
+  border: 1px solid rgba(124, 58, 237, 0.22);
+  border-radius: 999px;
+  padding: 0.33rem 0.5rem;
+  background: rgba(245, 243, 255, 0.9);
+}
+
+.mobile-search-trigger {
+  border: none;
+  width: 26px;
   height: 26px;
-  font-size: 16px;
-  border-radius: 2px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7c3aed, #0ea5e9);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search2 input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 0.84rem;
+}
+
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  z-index: 125;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.22s ease;
+}
+
+.sidebar-overlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: min(330px, 86vw);
+  transform: translateX(-102%);
+  transition: transform 0.24s ease;
+  z-index: 130;
+  background:
+    radial-gradient(circle at 10% 10%, rgba(124, 58, 237, 0.12), transparent 32%),
+    #fff;
+  border-right: 1px solid rgba(124, 58, 237, 0.2);
+  box-shadow: 22px 0 46px rgba(91, 33, 182, 0.22);
+}
+
+.sidebar.open {
+  transform: translateX(0);
+}
+
+.sidebar-scroll {
+  height: 100%;
+  overflow-y: auto;
+  padding: 3.1rem 0.9rem 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.sidebar-close-icon-btn {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 12px;
+  color: #ffffff;
+  font-size: 1.7rem;
+  line-height: 1;
+  font-weight: 800;
+  background: linear-gradient(135deg, #ef4444, #f97316);
+  box-shadow: 0 10px 20px rgba(239, 68, 68, 0.32);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 6;
+}
+
+.sidebar-close-icon-btn:hover {
+  transform: translateY(-1px);
+}
+
+.sidebar-profile,
+.sidebar-card {
+  margin: 0;
+  width: 100%;
+  border: 1px solid rgba(124, 58, 237, 0.2);
+  border-radius: 14px;
+  padding: 0.8rem;
+  background: rgba(245, 243, 255, 0.62);
+}
+
+.sidebar-profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.sidebar-avatar {
+  width: 58px;
+  height: 58px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid rgba(124, 58, 237, 0.35);
+}
+
+.sidebar-avatar-fallback {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 800;
+  background: linear-gradient(135deg, #7c3aed, #0ea5e9);
+}
+
+.sidebar-profile p {
+  margin: 0;
+  color: #4b5563;
+}
+
+.sidebar-profile p span {
+  color: #4c1d95;
+  font-weight: 700;
+}
+
+.sidebar-card h4 {
+  margin: 0;
+  color: #312e81;
+  font-size: 0.98rem;
+  font-weight: 800;
+}
+
+.sidebar-card p {
+  margin: 0.35rem 0 0;
+  color: #6b7280;
+  font-size: 0.84rem;
+  text-align: left;
+}
+
+.sidebar-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+  margin: 0;
+  width: 100%;
+  border: 1px solid rgba(124, 58, 237, 0.2);
+  border-radius: 14px;
+  padding: 0.45rem;
+  background: rgba(245, 243, 255, 0.62);
+}
+
+.sidebar-links a,
+.sidebar-actions a {
+  display: block;
+  width: 100%;
+  padding: 0.66rem 0.78rem;
+  border-radius: 10px;
+  color: #374151;
+  font-weight: 600;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.sidebar-links a:hover,
+.sidebar-actions a:hover {
+  background: rgba(124, 58, 237, 0.12);
+  color: #5b21b6;
+}
+
+.sidebar-actions {
+  margin-top: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 0.45rem;
+}
+
+.sidebar-logout-btn {
+  margin-top: 0.4rem;
+  border: none;
+  border-radius: 10px;
+  width: 100%;
+  padding: 0.56rem 0.72rem;
+  color: #fff;
+  font-weight: 700;
+  background: linear-gradient(135deg, #ef4444, #f97316);
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.35rem;
+}
+
+.sidebar-hire-text {
+  margin: 0.3rem 0.4rem 0;
+  text-align: center;
+  font-size: 0.82rem;
+  color: #6d28d9;
+  font-weight: 700;
+}
+
+@media (max-width: 1000px) {
+  .search2 {
+    display: none;
   }
-  .hire2{
-    position: relative;
-    left: 62%;
-    display: inline-flex;
-    height: 30px;
-    top: -10rem;
-    margin-left: 23px;
-    font-weight: 500;
+}
+
+@media (min-width: 992px) {
+  .App2,
+  .sidebar,
+  .sidebar-overlay {
+    display: none;
   }
-  
-  
-  @media screen and (max-width: 768px) {
-    .search2{
-      position: relative;
-      left: 62%;
-      top: -6.9rem;
-  
-    }
-    .search2 input{
-    
-        
-        font-size: 15px;
-        padding: 12px 2px;
-        width: 100px;
-        color: black;
-        font-weight: bolder;
-        border: none;
-        outline: none;
-    }
-    .btn4{
-      top: -9.2rem;
-      width: 50px;
-      font-size: 13px;
-      left: 82%;
-    }
-    .hire2{
-      position: relative;
-      left: 45%;
-      display: inline-flex;
-  
-      top: -8.5rem;
-      font-size: 16px;
-      margin-left: 23px;
-      font-weight: 300;
-    }
-    .hire2 p{
-      font-size: 15px;
-    }
-  
-    #nav2-img{
-  position: relative;
-  top: 2px;
-  margin-left: 34px;
-    }
-    .open-btn {
-      font-size: 30px;
-      cursor: pointer;
-  position: relative;
-  top: -2.5rem;
-  margin-left: -13px;
-    }
+}
+
+@media (max-width: 420px) {
+  #nav2-img {
+    width: 112px;
   }
+
+  .mobile-mini-btn {
+    padding: 0.33rem 0.5rem;
+    font-size: 0.74rem;
+  }
+}

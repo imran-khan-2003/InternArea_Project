@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./job.css";
 // import JobData from "../Data/JobsDataAvl";
 import compLogo from "../../Assets/netflix.png";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
 
 function JobAvl() {
@@ -10,6 +10,7 @@ function JobAvl() {
   const [searchLoaction, setSearchLocation] = useState("");
   const [filterJob, setFilterJob] = useState([]);
   const [isDivVisible, setDivVisible] = useState(false);
+  const location = useLocation();
   const showDiv = () => {
     setDivVisible(true);
   };
@@ -19,19 +20,23 @@ function JobAvl() {
   const handleCategoryChange = (e) => {
     const categoryValue = e.target.value;
     setSearchCategory(categoryValue);
-    setFilterJob([categoryValue, searchLoaction]);
   };
 
   const handleCategoryLocationChange = (e) => {
     const loactionValue = e.target.value;
     setSearchLocation(loactionValue);
-    setFilterJob([serachCategory, loactionValue]);
+  };
+
+  const clearAllFilters = () => {
+    setSearchCategory("");
+    setSearchLocation("");
+    setFilterJob(JobData);
   };
   const[JobData,setJobData]=useState([]);
   useEffect(()=>{
     const fetchData=async()=>{
       try{
-        const response=await axios.get(`https://backend-internarea-fun8.onrender.com/api/job`)
+        const response=await axios.get(`/api/job`)
         setJobData(response.data)
       }catch(error){
         console.log(error)
@@ -43,14 +48,23 @@ function JobAvl() {
   const filterJobs = (category, location) => {
     const filterData = JobData.filter(
       (Job) =>
-        Job.category.toLowerCase().includes(category.toLowerCase()) &&
-        Job.location.toLowerCase().includes(location.toLowerCase())
+        (
+          Job.category?.toLowerCase().includes(category.toLowerCase()) ||
+          Job.title?.toLowerCase().includes(category.toLowerCase()) ||
+          Job.company?.toLowerCase().includes(category.toLowerCase())
+        ) &&
+        Job.location?.toLowerCase().includes(location.toLowerCase())
     );
     setFilterJob(filterData);
   };
   useEffect(() => {
     filterJobs(serachCategory, searchLoaction);
-  }, [searchLoaction, serachCategory]);
+  }, [searchLoaction, serachCategory, JobData]);
+
+  useEffect(() => {
+    const query = new URLSearchParams(location.search).get("q") || "";
+    setSearchCategory(query);
+  }, [location.search]);
 
   return (
     <>
@@ -110,9 +124,9 @@ function JobAvl() {
             <p className=" mt-5 text-blue-400">
               View more filters <i class="bi bi-chevron-down"></i>
             </p>
-            <span className="justify-end flex text-blue-400 mr-3">
+            <button type="button" onClick={clearAllFilters} className="justify-end flex text-blue-400 mr-3 clear-filter-btn">
               Clear all
-            </span>
+            </button>
           </div>
           <div className="search-2">
             <div className="search-container">
@@ -139,57 +153,57 @@ function JobAvl() {
           </div>
 
           {filterJob.map((data, index) => (
-            <div className="shadow-lg rounded-lg bg-white m-7 " id="display">
-              <div className="m-4">
+            <div key={data._id || index} className="job-result-card shadow-lg rounded-lg bg-white m-7 " id="display">
+              <div className="job-card-inner m-4">
                 <p className="mb-4 mt-3" id="boxer">
                   {" "}
                   <i className="bi bi-arrow-up-right text-blue-500"></i>{" "}
                   Actively Hiring
                 </p>
-                <div className="flex justify-end">
+                <div className="job-logo-row flex justify-end">
                   <img src={compLogo} className="w-14" alt="" />
                 </div>
-                <div className="all-ele">
-                  <div className="text-lg text-black m-2 mt-7 font-bold">
+                <div className="all-ele job-main">
+                  <div className="job-title text-lg text-black m-2 mt-7 font-bold">
                     {data.title}
                   </div>
-                  <div className="info">
+                  <div className="info job-company-block">
                     <p className="text-sm text-slate-300 font-bold">
                       {data.company}
                     </p>
                     <p className=" mt-2">{data.location}</p>
                   </div>
-                  <div className="flex text-sm justify-between">
-                    <p className="mt-3">
+                  <div className="job-meta flex text-sm justify-between">
+                    <p className="job-meta-item mt-3">
                       {" "}
                       <i class="bi bi-play-circle-fill"></i> Start Date <br />{" "}
                       {data.StartDate}
                     </p>
 
-                    <p className="mt-3">
+                    <p className="job-meta-item mt-3">
                       {" "}
                       <i class="bi bi-calendar-check-fill"></i> Experience{" "}
                       <br />
                       {data.Experience}
                     </p>
 
-                    <p className="mt-3">
+                    <p className="job-meta-item mt-3">
                       {" "}
                       <i class="bi bi-cash"></i> Salary <br /> {data.CTC}
                     </p>
                   </div>
                 </div>
-                <span className="bg-slate-200 text-slate-400 w-20 rounded-sm text-center">
+                <span className="job-type-pill bg-slate-200 text-slate-400 w-20 rounded-sm text-center">
                   Job
                 </span>
                 <br />
-                <span>
+                <span className="job-date-pill">
                   <i class="bi bi-stopwatch text-green-300"></i>23/11/2065
                 </span>
-                <div className="flex justify-end" id="hr">
-                  <Link to={`/job_detail?q=${data._id}`} className="mt-10"><button
+                <div className="job-action-row flex justify-end" id="hr">
+                  <Link to={`/job_detail?q=${data._id}`}><button
                     id="viewButtons"
-                    className="bg-transparent text-blue-500"
+                    className="job-view-btn bg-transparent text-blue-500"
                   >
                     View In Detail
                   </button></Link>
@@ -197,6 +211,14 @@ function JobAvl() {
               </div>
             </div>
           ))}
+
+          {filterJob.length === 0 && (
+            <div className="empty-list-card">
+              <h3>No jobs found</h3>
+              <p>Try a different profile or location, or clear all filters.</p>
+              <button type="button" onClick={clearAllFilters}>Reset filters</button>
+            </div>
+          )}
 
         </div>
       
@@ -229,7 +251,7 @@ function JobAvl() {
 </div>
 
 <p className= ' mt-5 text-blue-400'>View more filters <i class="bi bi-chevron-down"></i></p>
-<span className='justify-end flex text-blue-400 mr-3'>Clear all</span>
+<button type='button' onClick={clearAllFilters} className='justify-end flex text-blue-400 mr-3 clear-filter-btn'>Clear all</button>
 </div>
 <div className="search-2"><div className="search-container">
   <label htmlFor="ex ">Experince</label>

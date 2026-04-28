@@ -1,42 +1,53 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { selectUser } from '../Feature/Userslice'
 import { Link } from 'react-router-dom'
 
 function Profile() {
     const user=useSelector(selectUser)
+    const [imageError, setImageError] = useState(false)
   return (
-    <div>
-      <div className="flex items-center mt-9 mb-4 justify-center">
-        <div className='max-w-xs'>
-            <div className='bg-white shadow-lg rounded-lg py-3'>
-   <div className="photo-wrapper p-2">
-<img src={user.photo} alt="" className='w-32 h-32 rounded-full mx-auto' />
-   </div>
-<div className='p-2'>
+    <div className="profile-wrap">
+      <div className="profile-card-main">
+        <div className="profile-photo-wrap">
+          {user?.photo && !imageError ? (
+            <img
+              src={user?.photo}
+              alt={user?.name || "User"}
+              className='profile-photo-main'
+              onError={() => setImageError(true)}
+              referrerPolicy="no-referrer"
+            />
+          ) : (
+            <div className='profile-photo-main profile-photo-fallback'>
+              {(user?.name || "U").charAt(0).toUpperCase()}
+            </div>
+          )}
+        </div>
 
-    <h3 className='text-center text-xl text-gray-900'>{user.name}</h3>
-</div>
-<div className='text-xs my-3'>
-<h3 className='text-xl font-bold'>UID</h3>
-    <h3 className='text-center text-lg text-gray-900'>{user.uid}</h3>
-</div>
-<div>
+        <div className='profile-main-content'>
+          <h2>{user?.name || "InternArea User"}</h2>
+          <p className="profile-email">{user?.email || "No email available"}</p>
 
-<h3  className='text-xl font-bold'>Email</h3>
-    <h3 className='text-center text-xl text-gray-900'>{user.email}</h3>
-</div>
-<div className='flex justify-center mt-3' >
+          <div className='profile-meta-grid'>
+            <div>
+              <span>UID</span>
+              <strong>{user?.uid || "-"}</strong>
+            </div>
+            <div>
+              <span>Phone</span>
+              <strong>{user?.phoneNumber || "Not provided"}</strong>
+            </div>
+          </div>
 
-<Link to="/userApplication" class="relative  items-center justify-start inline-block px-5 py-3 overflow-hidden font-medium transition-all bg-blue-600 rounded-full hover:bg-white group">
-<span class="absolute inset-0 border-0 group-hover:border-[25px] ease-linear duration-100 transition-all border-white rounded-full"></span>
-<span class="relative w-full text-left text-white transition-colors duration-200 ease-in-out group-hover:text-blue-600">View Applciations</span>
-</Link>
-</div>
-</div>
-</div>
-</div>
-</div>
+          <div className='profile-action-row'>
+            <Link to="/userApplication" className='profile-action-btn'>
+              View Applications
+            </Link>
+          </div>
+        </div>
+      </div>
+    </div>
    
   )
 }

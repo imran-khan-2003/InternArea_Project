@@ -20,7 +20,7 @@ const id=params.get("q")
   const [data,setData]=useState([])
   useEffect(()=>{
     const fetchData=async()=>{
-      const response=await axios.get(`https://backend-internarea-fun8.onrender.com/api/internship/${id}`)
+      const response=await axios.get(`/api/internship/${id}`)
       setData(response.data)
       const {company,category}=response.data;
       setCompany(company)
@@ -48,7 +48,7 @@ const id=params.get("q")
         user:user,
         Application:id
       }
-      await axios.post("https://backend-internarea-fun8.onrender.com/api/application",bodyJson).then((res)=>{
+      await axios.post("/api/application",bodyJson).then((res)=>{
         alert("Done")
     navigate("/internships")
       
