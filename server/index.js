@@ -5,7 +5,7 @@ const path=require("path")
 const cors=require("cors")
 const{ connect}=require("./db")
 const router=require("./Routes/index")
-const port=5000;
+const port=8000;
 
 app.use(cors())
 app.use(bodyParser.json({limit:"50mb"}))
@@ -24,5 +24,5 @@ app.use((req,res,next)=>{
       next()
    })
 app.listen(port,()=>{
-      console.log("server is running on port")
+      console.log(`server is running on port ${port}`)
 })

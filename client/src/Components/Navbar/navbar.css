@@ -12,7 +12,7 @@ nav {
 }
 
 .navbar-spacer {
-  height: 74px;
+  height: calc(74px + 1.1rem);
 }
 
 ul {

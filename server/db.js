@@ -1,6 +1,6 @@
 const mongoose =require("mongoose");
 require("dotenv").config()
-const DATABASE=process.env.DATABASEURL
+const DATABASE=process.env.DATABASEURL || "mongodb://127.0.0.1:27017/internarea"
 const url=DATABASE
 
 const Internship = require("./Model/Internship");
